@@ -19,22 +19,23 @@ const request = require('request');
 
 
 const fetchBreedDescription = function (breedName, callback) {
-  request(`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`, function (error, response, body) {
+  request(`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`, function (error, _, body) {
     // callback(error, body)
     if (error) {
       callback(error);
-    } else {
-      body = JSON.parse(body);
-      if (!body[0]){ 
-        error = ("Breed not found");
-        callback(error);
-      } else {
-        callback(null, body[0].description);
-      }
-
+      return;
     }
-});
-}
+
+    const data = JSON.parse(body);
+
+    if (!data.length) {
+      callback("Breed not found");
+      return;
+    }
+
+    callback(null, data[0].description);
+  });
+};
 
 
 // fetchBreedDescription('Siberian', (error, description) => {
